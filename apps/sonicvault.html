@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SonicVault</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; overflow: hidden; user-select: none; }
+    
+    .app-container { max-width: 428px; height: 100vh; margin: 0 auto; display: flex; flex-direction: column; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); }
+    .screen { flex: 1; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
+    .screen.active { display: flex; }
+    
+    /* Header */
+    .app-header { display: none; align-items: center; justify-content: space-between; padding: 16px 20px; background: rgba(26, 26, 26, 0.95); border-bottom: 1px solid #2A2A2A; }
+    .app-header.show { display: flex; }
+    .header-btn { width: 44px; height: 44px; border-radius: 8px; background: transparent; border: 2px solid #2A2A2A; color: #00B3A6; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .header-title { font-size: 18px; font-weight: 600; color: #00B3A6; }
+    
+    /* Landing */
+    .landing-screen { justify-content: center; align-items: center; text-align: center; }
+    .logo-container { width: 280px; margin: 0 auto 32px auto; padding-left: 20px; }
+    .app-title { font-size: 48px; font-weight: 700; color: #00B3A6; margin-bottom: 12px; letter-spacing: 2px; }
+    .app-tagline { font-size: 18px; color: #B0B0B0; margin-bottom: 60px; }
+    .start-btn { width: 90%; max-width: 300px; padding: 20px; background: #00B3A6; color: #121212; border: none; border-radius: 12px; font-size: 20px; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+    
+    /* Library */
+    .screen-header { text-align: center; margin-bottom: 24px; }
+    .screen-header h2 { font-size: 28px; color: #00B3A6; margin-bottom: 8px; }
+    .album-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .album-item { cursor: pointer; }
+    .album-cover { width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; margin-bottom: 8px; background: linear-gradient(135deg, #2A2A2A 0%, #1E1E1E 100%); display: flex; align-items: center; justify-content: center; font-size: 48px; background-size: cover; background-position: center; }
+    .album-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .album-artist { font-size: 12px; color: #B0B0B0; }
+    
+    /* Player */
+    .album-art { width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #2A2A2A 0%, #1E1E1E 100%); border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; font-size: 64px; background-size: cover; background-position: center; }
+    .track-info { text-align: center; margin-bottom: 16px; }
+    .track-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: #00B3A6; }
+    .track-artist { font-size: 16px; color: #B0B0B0; margin-bottom: 12px; }
+    .track-specs { color: #00B3A6; font-size: 14px; padding: 6px 12px; background: rgba(0, 179, 166, 0.1); border-radius: 16px; display: inline-block; }
+    
+    /* Progress */
+    .progress-container { margin: 24px 0; }
+    .progress-bar { width: 100%; height: 6px; background: #2A2A2A; border-radius: 3px; overflow: hidden; cursor: pointer; margin-bottom: 8px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #00B3A6 0%, #00d4c4 100%); width: 33%; transition: width 0.1s; }
+    .progress-time { display: flex; justify-content: space-between; font-size: 13px; color: #B0B0B0; }
+    
+    /* Controls */
+    .controls { display: flex; justify-content: center; gap: 32px; margin: 24px 0; }
+    .control-btn { width: 64px; height: 64px; border-radius: 50%; background: #2A2A2A; border: none; color: #00B3A6; font-size: 24px; cursor: pointer; transition: all 0.2s; }
+    .control-btn:hover { background: rgba(0, 179, 166, 0.2); transform: scale(1.05); }
+    .control-btn.play { width: 80px; height: 80px; background: #00B3A6; color: #121212; font-size: 32px; }
+    .control-btn.play:hover { background: #00d4c4; }
+    
+    /* Track List in Player */
+    .player-tracklist { margin-top: 24px; max-height: 200px; overflow-y: auto; }
+    .player-track-item { display: flex; align-items: center; padding: 10px 12px; background: rgba(30, 30, 30, 0.4); border-radius: 6px; margin-bottom: 6px; cursor: pointer; transition: all 0.2s; }
+    .player-track-item:hover { background: rgba(0, 179, 166, 0.1); }
+    .player-track-item.active { background: rgba(0, 179, 166, 0.2); border-left: 3px solid #00B3A6; }
+    .track-num { width: 30px; color: #666; font-size: 13px; }
+    .track-name { flex: 1; font-size: 13px; color: #FFF; }
+    .track-dur { color: #999; font-size: 12px; }
+    
+    /* EQ */
+    .eq-presets { display: flex; gap: 8px; margin-bottom: 32px; overflow-x: auto; }
+    .preset-btn { padding: 10px 20px; background: #1E1E1E; border: 2px solid #2A2A2A; color: #00B3A6; border-radius: 20px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+    .preset-btn.active { background: #00B3A6; color: #121212; }
+    .eq-sliders { display: flex; justify-content: space-between; height: 280px; margin: 32px 0; }
+    .eq-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .eq-slider { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 6px; height: 200px; background: #2A2A2A; border-radius: 3px; }
+    .eq-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #00B3A6; }
+    .eq-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #00B3A6; border: none; }
+    .eq-val { font-size: 11px; color: #00B3A6; font-weight: 600; }
+    .eq-lbl { font-size: 10px; color: #999; }
+    
+    /* Nav */
+    .nav-bar { display: none; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 12px 16px; background: rgba(26, 26, 26, 0.95); border-top: 1px solid #2A2A2A; }
+    .nav-bar.show { display: grid; }
+    .nav-btn { padding: 12px 8px; background: transparent; border: 2px solid #2A2A2A; color: #00B3A6; border-radius: 8px; cursor: pointer; font-size: 10px; text-transform: uppercase; }
+    .nav-btn.active { background: #00B3A6; color: #121212; }
+    
+    /* Settings */
+    .settings-section { margin-bottom: 24px; }
+    .settings-section h4 { font-size: 14px; color: #00B3A6; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(30, 30, 30, 0.6); border-radius: 8px; margin-bottom: 8px; }
+    .setting-label { font-size: 14px; }
+    .setting-desc { font-size: 11px; color: #999; margin-top: 4px; }
+    .toggle-switch { width: 48px; height: 26px; background: #2A2A2A; border-radius: 13px; position: relative; cursor: pointer; transition: background 0.3s; }
+    .toggle-switch.active { background: #00B3A6; }
+    .toggle-knob { width: 20px; height: 20px; background: #FFF; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: left 0.3s; }
+    .toggle-switch.active .toggle-knob { left: 25px; }
+    
+    /* Search */
+    .search-box { width: 100%; padding: 14px 16px; background: rgba(30, 30, 30, 0.8); border: 2px solid #2A2A2A; border-radius: 10px; color: #FFF; font-size: 15px; margin-bottom: 20px; }
+    .search-box:focus { outline: none; border-color: #00B3A6; }
+    .search-results { margin-top: 16px; }
+    .search-item { padding: 12px; background: rgba(30, 30, 30, 0.5); border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
+    .search-item:hover { background: rgba(0, 179, 166, 0.1); }
+    .search-empty { text-align: center; color: #666; padding: 40px 20px; font-size: 14px; }
+    
+    /* Stats */
+    .stat-card { background: linear-gradient(135deg, rgba(0, 179, 166, 0.15) 0%, rgba(30, 30, 30, 0.8) 100%); padding: 20px; border-radius: 12px; margin-bottom: 16px; border: 1px solid rgba(0, 179, 166, 0.2); }
+    .stat-number { font-size: 32px; font-weight: 700; color: #00B3A6; margin-bottom: 4px; }
+    .stat-label { font-size: 13px; color: #B0B0B0; }
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
+    .mini-stat { background: rgba(30, 30, 30, 0.6); padding: 16px; border-radius: 8px; text-align: center; }
+    .mini-stat-value { font-size: 20px; font-weight: 600; color: #00B3A6; }
+    .mini-stat-label { font-size: 11px; color: #999; margin-top: 4px; }
+    
+    /* Favorites */
+    .favorite-item { display: flex; align-items: center; padding: 12px; background: rgba(30, 30, 30, 0.6); border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
+    .favorite-item:hover { background: rgba(0, 179, 166, 0.1); }
+    .favorite-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #2A2A2A 0%, #1E1E1E 100%); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 12px; }
+    .favorite-info { flex: 1; }
+    .favorite-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .favorite-artist { font-size: 12px; color: #B0B0B0; }
+    .favorite-remove { color: #FF3366; font-size: 18px; padding: 8px; }
+    
+    /* Menu Overlay */
+    .menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .menu-overlay.show { display: flex; }
+    .menu-content { width: 90%; max-width: 340px; background: #1a1a1a; border-radius: 16px; padding: 24px; border: 2px solid #2A2A2A; }
+    .menu-title { font-size: 22px; color: #00B3A6; margin-bottom: 20px; text-align: center; }
+    .menu-item { padding: 14px; background: rgba(30, 30, 30, 0.6); border-radius: 8px; margin-bottom: 10px; cursor: pointer; text-align: center; font-size: 14px; }
+    .menu-item:hover { background: rgba(0, 179, 166, 0.2); }
+    .menu-close { width: 100%; padding: 14px; background: #00B3A6; color: #121212; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; }
+    
+    /* Badges */
+    .badges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+    .badge { background: rgba(30, 30, 30, 0.8); padding: 12px; border-radius: 8px; text-align: center; font-size: 13px; color: #00B3A6; border: 1px solid rgba(0, 179, 166, 0.2); cursor: pointer; transition: all 0.3s ease; }
+    .badge:hover { background: rgba(0, 179, 166, 0.2); transform: translateY(-2px); }
+    .badge.active { background: #00B3A6; color: #121212; border-color: #00B3A6; }
+    .badge-info { background: rgba(10, 10, 10, 0.95); padding: 16px; border-radius: 8px; margin-top: 12px; font-size: 12px; color: #B0B0B0; line-height: 1.6; display: none; border-left: 3px solid #00B3A6; }
+    .badge-info.show { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    h3 { font-size: 20px; color: #00B3A6; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    
+    <div class="app-header" id="appHeader">
+      <button class="header-btn" onclick="goBack()">←</button>
+      <div class="header-title" id="headerTitle">SonicVault</div>
+      <button class="header-btn" onclick="openMenu()">☰</button>
+    </div>
+    
+    <div class="screen landing-screen active" id="landingScreen">
+      <div class="logo-container">
+        <svg width="100%" height="100%" viewBox="0 0 275 176" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;letter-spacing:0.5px;">
+          <g transform="matrix(1,0,0,1,-234,-173)">
+            <g transform="matrix(1,0,0,1,-38,-14)">
+              <path d="M301.7,339.2C299.2,339.2 297,338.7 295.3,337.8C293.6,336.9 292.3,335.6 291.4,334C290.5,332.4 290.1,330.6 290.1,328.6L290.1,327.4L295.6,327.4L295.6,328.4C295.6,330.1 296.1,331.5 297.1,332.5C298.1,333.5 299.7,334 301.8,334C303.9,334 304.7,333.6 305.5,332.9C306.3,332.2 306.7,331.3 306.7,330.3C306.7,329.3 306.5,329.1 306.2,328.5C305.9,328 305.3,327.5 304.5,327.1C303.7,326.7 302.6,326.4 301.1,326.1C299.2,325.8 297.5,325.3 296,324.7C294.5,324.1 293.3,323.2 292.4,322C291.5,320.8 291.1,319.3 291.1,317.4L291.1,317.2C291.1,315.6 291.5,314.2 292.3,313C293.1,311.8 294.3,310.8 295.8,310C297.3,309.3 299.1,308.9 301.1,308.9C303.1,308.9 305.3,309.3 306.9,310.1C308.5,310.9 309.7,312 310.5,313.4C311.3,314.8 311.7,316.2 311.7,317.8L311.7,319.3L306.2,319.3L306.2,318.3C306.2,317.1 305.8,316.1 304.9,315.3C304,314.4 302.7,314 301.1,314C299.5,314 298.7,314.3 297.9,314.8C297.1,315.4 296.7,316.1 296.7,317.1C296.7,318.1 297.1,318.9 298,319.5C298.9,320.1 300.5,320.6 302.9,321.1C305.9,321.6 308.2,322.5 309.8,323.8C311.4,325.1 312.2,327 312.2,329.6L312.2,330.1C312.2,332.8 311.3,334.9 309.4,336.5C307.5,338.1 305,338.9 301.7,338.9L301.7,339.2Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-38,-14)">
+              <path d="M326.5,339.2C324.6,339.2 322.9,338.8 321.3,338C319.7,337.2 318.4,336 317.4,334.4C316.4,332.8 315.9,330.9 315.9,328.7L315.9,328.2C315.9,326 316.4,324.1 317.4,322.5C318.4,320.9 319.7,319.7 321.3,318.9C322.9,318.1 324.7,317.7 326.5,317.7C328.3,317.7 330.1,318.1 331.7,318.9C333.3,319.7 334.6,320.9 335.6,322.5C336.6,324.1 337.1,326 337.1,328.2L337.1,328.7C337.1,331 336.6,332.9 335.6,334.4C334.6,336 333.3,337.2 331.7,338C330.1,338.8 328.3,339.2 326.5,339.2ZM326.5,334.3C328,334.3 329.3,333.8 330.4,332.8C331.5,331.8 332,330.5 332,328.8L332,328C332,326.3 331.5,325 330.4,324C329.3,323 328.1,322.6 326.5,322.6C324.9,322.6 323.7,323.1 322.6,324C321.5,325 321,326.3 321,328L321,328.8C321,330.5 321.5,331.8 322.6,332.8C323.7,333.8 324.9,334.3 326.5,334.3Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-39,-14)">
+              <path d="M342.4,338.6L342.4,318.1L347.6,318.1L347.6,321.2L348.3,321.2C348.8,320 349.5,319.1 350.6,318.5C351.6,317.9 352.9,317.6 354.3,317.6C355.7,317.6 356.8,317.9 357.9,318.4C359,319 359.9,319.8 360.5,321C361.1,322.2 361.5,323.7 361.5,325.6L361.5,338.6L356.3,338.6L356.3,327C356.3,325.5 355.9,324.4 355.2,323.6C354.5,322.8 353.5,322.3 352.2,322.3C350.9,322.3 349.5,322.8 348.8,323.8C348,324.8 347.6,326.2 347.6,327.9L347.6,338.6L342.4,338.6Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-42,-14)">
+              <path d="M368,338.6L368,333.6L374.9,333.6L374.9,323L368.5,323L368.5,318L380.1,318L380.1,333.5L386,333.5L386,338.5L367.9,338.5L368,338.6ZM377.5,316C376.4,316 375.5,315.6 374.7,314.9C373.9,314.1 373.5,313.2 373.5,312.1C373.5,311 373.9,310.1 374.7,309.3C375.5,308.5 376.4,308.2 377.5,308.2C378.6,308.2 379.5,308.6 380.3,309.3C381.1,310.1 381.5,311 381.5,312.1C381.5,313.2 381.1,314.1 380.3,314.9C379.5,315.7 378.6,316 377.5,316Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-47,-14)">
+              <path d="M402.6,339.2C400.6,339.2 398.8,338.8 397.1,338C395.5,337.2 394.2,336 393.2,334.4C392.3,332.8 391.8,331 391.8,328.8L391.8,328.3C391.8,326.1 392.3,324.2 393.2,322.6C394.2,321 395.5,319.8 397.1,318.9C398.7,318 400.5,317.6 402.5,317.6C405.4,317.6 407.7,318.3 409.5,319.8C411.3,321.3 412.4,323.2 412.8,325.7L407.7,327C407.5,325.8 407,324.7 406.1,323.9C405.2,323 404,322.6 402.4,322.6C400.8,322.6 399.6,323.1 398.6,324.2C397.5,325.2 397,326.7 397,328.5L397,328.7C397,330.5 397.5,331.9 398.6,332.9C399.7,333.8 401,334.3 402.4,334.3C403.8,334.3 405.2,333.9 406.1,333.1C406.9,332.3 407.5,331.2 407.7,329.9L412.8,331.2C412.4,333.6 411.3,335.6 409.5,337.1C407.7,338.6 405.4,339.3 402.5,339.3L402.6,339.2Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-50,-14)">
+              <path d="M422.5,338.6L416,309.7L421.6,309.7L427.3,335.9L428,335.9L433.7,309.7L439.3,309.7L432.8,338.6L422.5,338.6Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-52,-14)">
+              <path d="M450.9,339.2C449.3,339.2 447.8,338.8 446.4,338C445,337.2 443.9,336 443.1,334.4C442.3,332.8 441.9,330.9 441.9,328.7L441.9,328C441.9,325.8 442.3,324 443.1,322.4C443.9,320.8 445,319.6 446.3,318.8C447.6,318 449.1,317.5 450.7,317.5C452.3,317.5 453.3,317.7 454.2,318.2C455.1,318.7 455.8,319.5 456.3,320.5L457,320.5L457,318L462.2,318L462.2,332.3C462.2,333.1 462.6,333.5 463.3,333.5L464.1,333.5L464.1,338.5L460.5,338.5C459.6,338.5 458.8,338.2 458.2,337.7C457.6,337.1 457.3,336.4 457.3,335.6L456.6,335.6C456.1,336.9 455.3,337.8 454.3,338.3C453.3,338.9 452.1,339.1 450.8,339.1L450.9,339.2ZM452.1,334.3C453.6,334.3 454.8,333.8 455.7,332.8C456.6,331.8 457.1,330.4 457.1,328.7L457.1,328.2C457.1,326.5 456.6,325.1 455.7,324.1C454.8,323.1 453.6,322.6 452.1,322.6C450.6,322.6 449.4,323.1 448.5,324.1C447.6,325.1 447.1,326.5 447.1,328.2L447.1,328.7C447.1,330.4 447.6,331.8 448.5,332.8C449.4,333.8 450.6,334.3 452.1,334.3Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-53,-14)">
+              <path d="M476,339.2C474.7,339.2 473.4,338.9 472.3,338.3C471.2,337.7 470.3,336.8 469.7,335.6C469.1,334.4 468.7,332.8 468.7,331L468.7,318.2L473.9,318.2L473.9,329.9C473.9,331.3 474.3,332.5 475,333.3C475.7,334.1 476.7,334.5 478.1,334.5C479.5,334.5 480.8,334 481.5,333C482.2,332 482.6,330.6 482.6,328.9L482.6,318.2L487.8,318.2L487.8,338.7L482.6,338.7L482.6,335.7L481.9,335.7C481,338.1 479,339.3 476,339.3L476,339.2Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-57,-14)">
+              <path d="M493.9,338.6L493.9,333.6L501.1,333.6L501.1,314.6L494.2,314.6L494.2,309.6L506.3,309.6L506.3,333.5L513,333.5L513,338.5L493.9,338.5L493.9,338.6Z" style="fill:#00B3A6;fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-65,-14)">
+              <path d="M527.9,338.6C527,338.6 526.2,338.3 525.6,337.7C525,337.1 524.7,336.3 524.7,335.4L524.7,323.1L518.6,323.1L518.6,318.1L524.7,318.1L524.7,309.7L529.9,309.7L529.9,318.1L537.3,318.1L537.3,323.1L529.9,323.1L529.9,332.4C529.9,333.2 530.3,333.6 531,333.6L536.5,333.6L536.5,338.6L527.8,338.6L527.9,338.6Z" style="fill:#00B3A6;fill-rule:nonzero;stroke:#00B3A6;stroke-width:1px;"/>
+            </g>
+          </g>
+          <g transform="matrix(1,0,0,1,-234,-173)">
+            <rect x="395.2" y="202.5" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M399.05,202.5L399.05,211.6C399.05,211.628 399.028,211.65 399,211.65L395.2,211.65C395.172,211.65 395.15,211.628 395.15,211.6L395.15,202.5C395.15,202.472 395.172,202.45 395.2,202.45L399,202.45C399.028,202.45 399.05,202.472 399.05,202.5ZM398.95,202.55L395.25,202.55L395.25,211.55L398.95,211.55L398.95,202.55Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="385.5" y="197.9" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M389.35,197.9L389.35,207C389.35,207.028 389.328,207.05 389.3,207.05L385.5,207.05C385.472,207.05 385.45,207.028 385.45,207L385.45,197.9C385.45,197.872 385.472,197.85 385.5,197.85L389.3,197.85C389.328,197.85 389.35,197.872 389.35,197.9ZM389.25,197.95L385.55,197.95L385.55,206.95L389.25,206.95L389.25,197.95Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="375.8" y="192.2" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M379.65,192.2L379.65,201.3C379.65,201.328 379.628,201.35 379.6,201.35L375.8,201.35C375.772,201.35 375.75,201.328 375.75,201.3L375.75,192.2C375.75,192.172 375.772,192.15 375.8,192.15L379.6,192.15C379.628,192.15 379.65,192.172 379.65,192.2ZM379.55,192.25L375.85,192.25L375.85,201.25L379.55,201.25L379.55,192.25Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="366.2" y="188.5" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M370.05,188.5L370.05,197.6C370.05,197.628 370.028,197.65 370,197.65L366.2,197.65C366.172,197.65 366.15,197.628 366.15,197.6L366.15,188.5C366.15,188.472 366.172,188.45 366.2,188.45L370,188.45C370.028,188.45 370.05,188.472 370.05,188.5ZM369.95,188.55L366.25,188.55L366.25,197.55L369.95,197.55L369.95,188.55Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <g transform="matrix(1,0,0,1,0,-2)">
+              <rect x="327.6" y="211.9" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,0,-1)">
+              <rect x="337.2" y="202.1" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            </g>
+            <rect x="346.9" y="194.5" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M350.75,194.5L350.75,203.6C350.75,203.628 350.728,203.65 350.7,203.65L346.9,203.65C346.872,203.65 346.85,203.628 346.85,203.6L346.85,194.5C346.85,194.472 346.872,194.45 346.9,194.45L350.7,194.45C350.728,194.45 350.75,194.472 350.75,194.5ZM350.65,194.55L346.95,194.55L346.95,203.55L350.65,203.55L350.65,194.55Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="356.5" y="190.1" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M360.35,190.1L360.35,199.2C360.35,199.228 360.328,199.25 360.3,199.25L356.5,199.25C356.472,199.25 356.45,199.228 356.45,199.2L356.45,190.1C356.45,190.072 356.472,190.05 356.5,190.05L360.3,190.05C360.328,190.05 360.35,190.072 360.35,190.1ZM360.25,190.15L356.55,190.15L356.55,199.15L360.25,199.15L360.25,190.15Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="404.8" y="197.4" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M408.65,197.4L408.65,206.5C408.65,206.528 408.628,206.55 408.6,206.55L404.8,206.55C404.772,206.55 404.75,206.528 404.75,206.5L404.75,197.4C404.75,197.372 404.772,197.35 404.8,197.35L408.6,197.35C408.628,197.35 408.65,197.372 408.65,197.4ZM408.55,197.45L404.85,197.45L404.85,206.45L408.55,206.45L408.55,197.45Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <g transform="matrix(1,0,0,1,0,-3.45)">
+              <rect x="370.2" y="235.7" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            </g>
+            <rect x="361.1" y="241.8" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M364.95,241.8L364.95,250.9C364.95,250.928 364.928,250.95 364.9,250.95L361.1,250.95C361.072,250.95 361.05,250.928 361.05,250.9L361.05,241.8C361.05,241.772 361.072,241.75 361.1,241.75L364.9,241.75C364.928,241.75 364.95,241.772 364.95,241.8ZM364.85,241.85L361.15,241.85L361.15,250.85L364.85,250.85L364.85,241.85Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="352.1" y="232.3" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M355.95,232.3L355.95,241.4C355.95,241.428 355.928,241.45 355.9,241.45L352.1,241.45C352.072,241.45 352.05,241.428 352.05,241.4L352.05,232.3C352.05,232.272 352.072,232.25 352.1,232.25L355.9,232.25C355.928,232.25 355.95,232.272 355.95,232.3ZM355.85,232.35L352.15,232.35L352.15,241.35L355.85,241.35L355.85,232.35Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="343" y="225.8" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M346.85,225.8L346.85,234.9C346.85,234.928 346.828,234.95 346.8,234.95L343,234.95C342.972,234.95 342.95,234.928 342.95,234.9L342.95,225.8C342.95,225.772 342.972,225.75 343,225.75L346.8,225.75C346.828,225.75 346.85,225.772 346.85,225.8ZM346.75,225.85L343.05,225.85L343.05,234.85L346.75,234.85L346.75,225.85Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="397.4" y="228.8" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M401.25,228.8L401.25,237.9C401.25,237.928 401.228,237.95 401.2,237.95L397.4,237.95C397.372,237.95 397.35,237.928 397.35,237.9L397.35,228.8C397.35,228.772 397.372,228.75 397.4,228.75L401.2,228.75C401.228,228.75 401.25,228.772 401.25,228.8ZM401.15,228.85L397.45,228.85L397.45,237.85L401.15,237.85L401.15,228.85Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="388.3" y="222.2" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M392.15,222.2L392.15,231.3C392.15,231.328 392.128,231.35 392.1,231.35L388.3,231.35C388.272,231.35 388.25,231.328 388.25,231.3L388.25,222.2C388.25,222.172 388.272,222.15 388.3,222.15L392.1,222.15C392.128,222.15 392.15,222.172 392.15,222.2ZM392.05,222.25L388.35,222.25L388.35,231.25L392.05,231.25L392.05,222.25Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <g transform="matrix(1,0,0,1,0,-3)">
+              <rect x="379.3" y="229.3" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            </g>
+            <rect x="334" y="221.3" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M337.85,221.3L337.85,230.4C337.85,230.428 337.828,230.45 337.8,230.45L334,230.45C333.972,230.45 333.95,230.428 333.95,230.4L333.95,221.3C333.95,221.272 333.972,221.25 334,221.25L337.8,221.25C337.828,221.25 337.85,221.272 337.85,221.3ZM337.75,221.35L334.05,221.35L334.05,230.35L337.75,230.35L337.75,221.35Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="335" y="257.1" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M338.85,257.1L338.85,266.2C338.85,266.228 338.828,266.25 338.8,266.25L335,266.25C334.972,266.25 334.95,266.228 334.95,266.2L334.95,257.1C334.95,257.072 334.972,257.05 335,257.05L338.8,257.05C338.828,257.05 338.85,257.072 338.85,257.1ZM338.75,257.15L335.05,257.15L335.05,266.15L338.75,266.15L338.75,257.15Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="344.7" y="261.6" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M348.55,261.6L348.55,270.7C348.55,270.728 348.528,270.75 348.5,270.75L344.7,270.75C344.672,270.75 344.65,270.728 344.65,270.7L344.65,261.6C344.65,261.572 344.672,261.55 344.7,261.55L348.5,261.55C348.528,261.55 348.55,261.572 348.55,261.6ZM348.45,261.65L344.75,261.65L344.75,270.65L348.45,270.65L348.45,261.65Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="354.4" y="267.3" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M358.25,267.3L358.25,276.4C358.25,276.428 358.228,276.45 358.2,276.45L354.4,276.45C354.372,276.45 354.35,276.428 354.35,276.4L354.35,267.3C354.35,267.272 354.372,267.25 354.4,267.25L358.2,267.25C358.228,267.25 358.25,267.272 358.25,267.3ZM358.15,267.35L354.45,267.35L354.45,276.35L358.15,276.35L358.15,267.35Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="364" y="271" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M367.85,271L367.85,280.1C367.85,280.128 367.828,280.15 367.8,280.15L364,280.15C363.972,280.15 363.95,280.128 363.95,280.1L363.95,271C363.95,270.972 363.972,270.95 364,270.95L367.8,270.95C367.828,270.95 367.85,270.972 367.85,271ZM367.75,271.05L364.05,271.05L364.05,280.05L367.75,280.05L367.75,271.05Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="402.6" y="242.9" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M406.45,242.9L406.45,252C406.45,252.028 406.428,252.05 406.4,252.05L402.6,252.05C402.572,252.05 402.55,252.028 402.55,252L402.55,242.9C402.55,242.872 402.572,242.85 402.6,242.85L406.4,242.85C406.428,242.85 406.45,242.872 406.45,242.9ZM406.35,242.95L402.65,242.95L402.65,251.95L406.35,251.95L406.35,242.95Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="393" y="255.1" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M396.85,255.1L396.85,264.2C396.85,264.228 396.828,264.25 396.8,264.25L393,264.25C392.972,264.25 392.95,264.228 392.95,264.2L392.95,255.1C392.95,255.072 392.972,255.05 393,255.05L396.8,255.05C396.828,255.05 396.85,255.072 396.85,255.1ZM396.75,255.15L393.05,255.15L393.05,264.15L396.75,264.15L396.75,255.15Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="383.3" y="263.5" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M387.15,263.5L387.15,272.6C387.15,272.628 387.128,272.65 387.1,272.65L383.3,272.65C383.272,272.65 383.25,272.628 383.25,272.6L383.25,263.5C383.25,263.472 383.272,263.45 383.3,263.45L387.1,263.45C387.128,263.45 387.15,263.472 387.15,263.5ZM387.05,263.55L383.35,263.55L383.35,272.55L387.05,272.55L387.05,263.55Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="373.7" y="268.7" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M377.55,268.7L377.55,277.8C377.55,277.828 377.528,277.85 377.5,277.85L373.7,277.85C373.672,277.85 373.65,277.828 373.65,277.8L373.65,268.7C373.65,268.672 373.672,268.65 373.7,268.65L377.5,268.65C377.528,268.65 377.55,268.672 377.55,268.7ZM377.45,268.75L373.75,268.75L373.75,277.75L377.45,277.75L377.45,268.75Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+            <rect x="325.4" y="262.2" width="3.8" height="9.1" style="fill:#00B3A6;stroke:#00B3A6;stroke-width:1.5px;stroke-linecap:round;stroke-miterlimit:4;"/>
+            <path d="M329.25,262.2L329.25,271.3C329.25,271.328 329.228,271.35 329.2,271.35L325.4,271.35C325.372,271.35 325.35,271.328 325.35,271.3L325.35,262.2C325.35,262.172 325.372,262.15 325.4,262.15L329.2,262.15C329.228,262.15 329.25,262.172 329.25,262.2ZM329.15,262.25L325.45,262.25L325.45,271.25L329.15,271.25L329.15,262.25Z" style="fill-opacity:0;stroke:#00B3A6;stroke-width:1.5px;"/>
+          </g>
+        </svg>
+      </div>
+      <p class="app-tagline">Audiophile Music Player</p>
+      <button class="start-btn" onclick="enterApp()">Enter</button>
+    </div>
+    
+    <div class="screen" id="libraryScreen">
+      <div class="screen-header">
+        <h2>Home</h2>
+        <p style="color: #B0B0B0; font-size: 14px;">Audiophile Collection</p>
+      </div>
+      <div class="album-grid" id="albumGrid"></div>
+    </div>
+    
+    <div class="screen" id="playerScreen">
+      <div class="album-art" id="playerArt">🎵</div>
+      <div class="track-info">
+        <div class="track-title" id="trackTitle">The Look of Love</div>
+        <div class="track-artist" id="trackArtist">Diana Krall - Quiet Nights</div>
+        <span class="track-specs">FLAC 24-bit/192kHz</span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" onclick="seekTrack(event)">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-time">
+          <span id="currentTime">0:00</span>
+          <span id="totalTime">0:00</span>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="control-btn" onclick="prevTrack()">⏮</button>
+        <button class="control-btn play" id="playBtn" onclick="togglePlay()">▶</button>
+        <button class="control-btn" onclick="nextTrack()">⏭</button>
+      </div>
+      <div class="badges">
+        <div class="badge" onclick="toggleBadgeInfo('dsd')">DSD</div>
+        <div class="badge" onclick="toggleBadgeInfo('hires')">Hi-Res</div>
+        <div class="badge" onclick="toggleBadgeInfo('lossless')">Lossless</div>
+        <div class="badge" onclick="toggleBadgeInfo('24bit')">24-bit</div>
+      </div>
+      <div id="badgeInfo" class="badge-info"></div>
+      <div class="player-tracklist" id="playerTracklist"></div>
+    </div>
+    
+    <div class="screen" id="queueScreen">
+      <h3>Queue</h3>
+      <p style="color: #B0B0B0; padding: 20px; text-align: center;">No tracks in queue</p>
+    </div>
+    
+    <div class="screen" id="eqScreen">
+      <h3>Equalizer</h3>
+      <div class="eq-presets">
+        <button class="preset-btn active" onclick="setPreset(this,'flat')">Flat</button>
+        <button class="preset-btn" onclick="setPreset(this,'rock')">Rock</button>
+        <button class="preset-btn" onclick="setPreset(this,'jazz')">Jazz</button>
+        <button class="preset-btn" onclick="setPreset(this,'classical')">Classical</button>
+        <button class="preset-btn" onclick="setPreset(this,'bass')">Bass</button>
+      </div>
+      <div class="eq-sliders">
+        <div class="eq-col"><div class="eq-val" id="v0">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(0,this.value)"><div class="eq-lbl">60Hz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v1">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(1,this.value)"><div class="eq-lbl">170Hz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v2">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(2,this.value)"><div class="eq-lbl">310Hz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v3">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(3,this.value)"><div class="eq-lbl">600Hz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v4">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(4,this.value)"><div class="eq-lbl">1kHz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v5">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(5,this.value)"><div class="eq-lbl">3kHz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v6">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(6,this.value)"><div class="eq-lbl">6kHz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v7">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(7,this.value)"><div class="eq-lbl">12kHz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v8">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(8,this.value)"><div class="eq-lbl">14kHz</div></div>
+        <div class="eq-col"><div class="eq-val" id="v9">0</div><input type="range" class="eq-slider" min="-12" max="12" value="0" oninput="updateEQ(9,this.value)"><div class="eq-lbl">16kHz</div></div>
+      </div>
+    </div>
+    
+    <div class="screen" id="favoritesScreen">
+      <h3>Favorites</h3>
+      <div id="favoritesList"></div>
+      <p id="emptyFavorites" style="color: #666; text-align: center; padding: 40px 20px; font-size: 14px; display: none;">No favorites yet. Heart tracks to add them here!</p>
+    </div>
+    
+    <div class="screen" id="searchScreen">
+      <h3>Search Music</h3>
+      <input type="text" class="search-box" id="searchInput" placeholder="Search albums, artists, tracks..." oninput="performSearch()">
+      <div class="search-results" id="searchResults">
+        <div class="search-empty">Type to search your library</div>
+      </div>
+    </div>
+    
+    <div class="screen" id="statsScreen">
+      <h3>Your Stats</h3>
+      <div class="stat-card">
+        <div class="stat-number" id="totalTracks">127</div>
+        <div class="stat-label">Total Tracks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="listeningTime">24.5 hrs</div>
+        <div class="stat-label">This Week</div>
+      </div>
+      <div class="stat-grid">
+        <div class="mini-stat">
+          <div class="mini-stat-value" id="favCount">12</div>
+          <div class="mini-stat-label">Favorites</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-value" id="albumCount">6</div>
+          <div class="mini-stat-label">Albums</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-value" id="qualityScore">98%</div>
+          <div class="mini-stat-label">Hi-Res</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-value" id="playCount">342</div>
+          <div class="mini-stat-label">Plays</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="screen" id="settingsScreen">
+      <h3>Settings</h3>
+      <div class="settings-section">
+        <h4>Audio Quality</h4>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">Hi-Res Audio</div>
+            <div class="setting-desc">Play 24-bit/192kHz FLAC files</div>
+          </div>
+          <div class="toggle-switch active" onclick="toggleSetting(this)">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">Gapless Playback</div>
+            <div class="setting-desc">Seamless album transitions</div>
+          </div>
+          <div class="toggle-switch active" onclick="toggleSetting(this)">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h4>Appearance</h4>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">Dark Mode</div>
+            <div class="setting-desc">Always use dark theme</div>
+          </div>
+          <div class="toggle-switch active" onclick="toggleSetting(this)">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">Animations</div>
+            <div class="setting-desc">Enable UI transitions</div>
+          </div>
+          <div class="toggle-switch active" onclick="toggleSetting(this)">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h4>About</h4>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">SonicVault</div>
+            <div class="setting-desc">Version 2.5.0 • Audiophile Edition</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="nav-bar">
+      <button class="nav-btn active" onclick="switchScreen('libraryScreen')">Home</button>
+      <button class="nav-btn" onclick="switchScreen('playerScreen')">Playing</button>
+      <button class="nav-btn" onclick="switchScreen('favoritesScreen')">Favs</button>
+      <button class="nav-btn" onclick="switchScreen('searchScreen')">Search</button>
+      <button class="nav-btn" onclick="openMenu()">More</button>
+    </div>
+    
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()">
+      <div class="menu-content" onclick="event.stopPropagation()">
+        <div class="menu-title">More Options</div>
+        <div class="menu-item" onclick="switchScreen('queueScreen'); closeMenu();">Queue</div>
+        <div class="menu-item" onclick="switchScreen('eqScreen'); closeMenu();">Equalizer</div>
+        <div class="menu-item" onclick="switchScreen('statsScreen'); closeMenu();">Statistics</div>
+        <div class="menu-item" onclick="switchScreen('settingsScreen'); closeMenu();">Settings</div>
+        <button class="menu-close" onclick="closeMenu()">Close</button>
+      </div>
+    </div>
+    
+  </div>
+
+  <script>
+    const albums = [
+      {
+        title:'Quiet Nights',
+        artist:'Diana Krall',
+        icon:'🎵',
+        cover:'../images/albums/Quiet Nights-Diana Krall.jpeg',
+        tracks: [
+          { number: 1, title: 'Where Or When', duration: '4:09' },
+          { number: 2, title: 'Too Marvelous For Words', duration: '4:03' },
+          { number: 3, title: 'I\'ve Grown Accustomed To His Face', duration: '4:46' },
+          { number: 4, title: 'The Boy From Ipanema', duration: '4:52' },
+          { number: 5, title: 'Walk On By', duration: '5:01' },
+          { number: 6, title: 'You\'re My Thrill', duration: '5:47' },
+          { number: 7, title: 'Este Seu Olhar', duration: '2:45' },
+          { number: 8, title: 'So Nice', duration: '3:50' },
+          { number: 9, title: 'Quiet Nights', duration: '4:45' },
+          { number: 10, title: 'Guess I\'ll Hang My Tears Out To Dry', duration: '4:50' },
+          { number: 11, title: 'How Can You Mend A Broken Heart', duration: '4:29' },
+          { number: 12, title: 'Everytime We Say Goodbye', duration: '5:17' },
+          { number: 13, title: 'For No One', duration: '2:58' }
+        ]
+      },
+      {
+        title:'Blade Runner OST',
+        artist:'Vangelis',
+        icon:'🎹',
+        cover:'../images/albums/Blade Runner-Vangelis.jpeg',
+        tracks: [
+          { number: 1, title: 'Main Titles', duration: '3:42' },
+          { number: 2, title: 'Blush Response', duration: '5:46' },
+          { number: 3, title: 'Wait for Me', duration: '5:27' },
+          { number: 4, title: 'Rachel\'s Song', duration: '4:48' },
+          { number: 5, title: 'Love Theme', duration: '4:55' },
+          { number: 6, title: 'One More Kiss, Dear', duration: '3:59' },
+          { number: 7, title: 'Blade Runner Blues', duration: '8:54' },
+          { number: 8, title: 'Memories of Green', duration: '5:05' },
+          { number: 9, title: 'Tales of the Future', duration: '4:46' },
+          { number: 10, title: 'Damask Rose', duration: '2:32' },
+          { number: 11, title: 'Blade Runner - End Titles', duration: '4:39' },
+          { number: 12, title: 'Tears in Rain', duration: '3:00' }
+        ]
+      },
+      {
+        title:'Time Together',
+        artist:'Michael Franks',
+        icon:'🎷',
+        cover:'../images/albums/Time Together-Michael Franks.jpeg',
+        tracks: [
+          { number: 1, title: 'Now That Summer\'s Here', duration: '4:21' },
+          { number: 2, title: 'Watching the Snow', duration: '4:55' },
+          { number: 3, title: 'Island Life', duration: '3:48' },
+          { number: 4, title: 'Time Together', duration: '5:02' },
+          { number: 5, title: 'Hourglass', duration: '4:33' }
+        ]
+      },
+      {
+        title:'Wave',
+        artist:'Antonio Carlos Jobim',
+        icon:'🌊',
+        cover:'../images/albums/Wave-Antonio Carlos Jobim.jpeg',
+        tracks: [
+          { number: 1, title: 'Wave', duration: '3:15' },
+          { number: 2, title: 'The Red Blouse', duration: '3:42' },
+          { number: 3, title: 'Look to the Sky', duration: '3:28' },
+          { number: 4, title: 'Batidinha', duration: '2:55' },
+          { number: 5, title: 'Triste', duration: '4:10' }
+        ]
+      },
+      {
+        title:'Waltzes',
+        artist:'Johann Strauss',
+        icon:'🎻',
+        cover:'../images/albums/Waltzes-Strauss.jpeg',
+        tracks: [
+          { number: 1, title: 'Blue Danube', duration: '9:47' },
+          { number: 2, title: 'Artist\'s Life', duration: '9:30' },
+          { number: 3, title: 'Southern Roses', duration: '9:10' },
+          { number: 4, title: 'Voices Of Spring', duration: '5:51' },
+          { number: 5, title: 'Wine, Women And Song', duration: '5:53' },
+          { number: 6, title: 'Emperor Waltz', duration: '10:25' },
+          { number: 7, title: 'Acceleration Waltz', duration: '4:36' }
+        ]
+      },
+      {
+        title:"Fool's Wisdom",
+        artist:'Malcom & Alwyn',
+        icon:'🎸',
+        cover:"../images/albums/Fools-Wisdom-Malcom-And-Alwyn.jpeg",
+        tracks: [
+          { number: 1, title: 'Say It Like It Is', duration: '3:38' },
+          { number: 2, title: 'Fool\'s Wisdom', duration: '3:11' },
+          { number: 3, title: 'Tomorrow\'s News', duration: '3:40' },
+          { number: 4, title: 'Growing Old', duration: '4:03' },
+          { number: 5, title: 'Things Are Getting Better', duration: '3:33' },
+          { number: 6, title: 'Heaven Or Hell', duration: '3:56' },
+          { number: 7, title: 'Seed Of Corn', duration: '3:05' },
+          { number: 8, title: 'The World Needs Jesus', duration: '3:48' },
+          { number: 9, title: 'Always On My Mind', duration: '2:12' },
+          { number: 10, title: 'It\'s Here The Answer Lies', duration: '4:55' }
+        ]
+      },
+      {
+        title:'Love Song',
+        artist:'Love Song',
+        icon:'💝',
+        cover:'../images/albums/Love Song-Love Song.jpeg',
+// ...existing code...
+        tracks: [
+          { number: 1, title: 'Little Country Church', duration: '2:35' },
+          { number: 2, title: 'Love Song', duration: '3:52' },
+          { number: 3, title: 'Two Hands', duration: '3:18' },
+          { number: 4, title: 'Front Seat, Back Seat', duration: '4:02' },
+          { number: 5, title: 'Good News', duration: '2:43' },
+          { number: 6, title: 'Little Pilgrim', duration: '2:55' },
+          { number: 7, title: 'Road To Travel On', duration: '3:28' },
+          { number: 8, title: 'Freedom', duration: '3:45' },
+          { number: 9, title: 'He\'s Everywhere', duration: '2:38' },
+          { number: 10, title: 'Welcome Back', duration: '4:12' }
+        ]
+      }
+    ];
+    
+    let favorites = [];
+    let searchResults = [];
+    
+    let hasEntered = false;
+    let history = ['landingScreen'];
+    let currentScreen = 'landingScreen';
+    let isPlaying = false;
+    let progress = 0;
+    let currentAlbumIndex = 0;
+    let currentTrackIndex = 0;
+    let currentTime = 0;
+    let trackDuration = 0;
+    let animationInterval = null;
+    
+    function enterApp() {
+      hasEntered = true;
+      document.getElementById('appHeader').classList.add('show');
+      document.querySelector('.nav-bar').classList.add('show');
+      switchScreen('libraryScreen');
+      loadAlbums();
+    }
+    
+    function loadAlbums() {
+      const grid = document.getElementById('albumGrid');
+      grid.innerHTML = albums.map((a,i)=>`
+        <div class="album-item" onclick="playAlbum(${i})">
+          <div class="album-cover" style="background-image: url('${a.cover}');"></div>
+          <div class="album-name">${a.title}</div>
+          <div class="album-artist">${a.artist}</div>
+        </div>
+      `).join('');
+    }
+    
+    function playAlbum(i, trackIdx = 0) {
+      currentAlbumIndex = i;
+      currentTrackIndex = trackIdx;
+      
+      const album = albums[i];
+      const art = document.getElementById('playerArt');
+      art.style.backgroundImage = `url('${album.cover}')`;
+      art.textContent = '';
+      
+      loadTrack(currentAlbumIndex, currentTrackIndex);
+      loadPlayerTracklist();
+      switchScreen('playerScreen');
+    }
+    
+    function loadTrack(albumIdx, trackIdx) {
+      const album = albums[albumIdx];
+      const track = album.tracks[trackIdx];
+      
+      document.getElementById('trackTitle').textContent = track.title;
+      document.getElementById('trackArtist').textContent = `${album.artist} - ${album.title}`;
+      
+      // Update album art
+      const art = document.getElementById('playerArt');
+      art.style.backgroundImage = `url('${album.cover}')`;
+      art.textContent = '';
+      
+      // Parse duration (e.g., "4:09" to seconds)
+      const [mins, secs] = track.duration.split(':').map(Number);
+      trackDuration = mins * 60 + secs;
+      
+      document.getElementById('totalTime').textContent = track.duration;
+      
+      // Reset playback
+      currentTime = 0;
+      progress = 0;
+      document.getElementById('currentTime').textContent = '0:00';
+      document.getElementById('progressFill').style.width = '0%';
+      
+      // Update track list highlighting
+      updateTrackListHighlight();
+    }
+    
+    function loadPlayerTracklist() {
+      const album = albums[currentAlbumIndex];
+      const list = document.getElementById('playerTracklist');
+      
+      list.innerHTML = album.tracks.map((t, i) => `
+        <div class="player-track-item ${i === currentTrackIndex ? 'active' : ''}" onclick="playTrackFromList(${i})">
+          <div class="track-num">${t.number}</div>
+          <div class="track-name">${t.title}</div>
+          <div class="track-dur">${t.duration}</div>
+        </div>
+      `).join('');
+    }
+    
+    function playTrackFromList(trackIdx) {
+      currentTrackIndex = trackIdx;
+      loadTrack(currentAlbumIndex, currentTrackIndex);
+      if (isPlaying) {
+        startPlayback();
+      }
+    }
+    
+    function updateTrackListHighlight() {
+      const items = document.querySelectorAll('.player-track-item');
+      items.forEach((item, i) => {
+        if (i === currentTrackIndex) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+    
+    function switchScreen(id) {
+      if(!hasEntered && id!=='landingScreen') return;
+      
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      
+      if(id!==currentScreen) {
+        history.push(id);
+        if(history.length>20) history.shift();
+      }
+      currentScreen = id;
+      
+      const titles = {
+        landingScreen:'SonicVault',
+        libraryScreen:'Home',
+        playerScreen:'Now Playing',
+        queueScreen:'Queue',
+        eqScreen:'Equalizer',
+        favoritesScreen:'Favorites',
+        searchScreen:'Search',
+        statsScreen:'Statistics',
+        settingsScreen:'Settings'
+      };
+      document.getElementById('headerTitle').textContent = titles[id];
+      
+      document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+      if(id==='libraryScreen') document.querySelectorAll('.nav-btn')[0].classList.add('active');
+      if(id==='playerScreen') document.querySelectorAll('.nav-btn')[1].classList.add('active');
+      if(id==='favoritesScreen') document.querySelectorAll('.nav-btn')[2].classList.add('active');
+      if(id==='searchScreen') document.querySelectorAll('.nav-btn')[3].classList.add('active');
+      
+      // Load screen-specific data
+      if(id==='favoritesScreen') loadFavorites();
+      if(id==='statsScreen') updateStats();
+    }
+    
+    function goBack() {
+      if(history.length>1) {
+        history.pop();
+        switchScreen(history[history.length-1]);
+      }
+    }
+    
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playBtn').textContent = isPlaying ? '⏸' : '▶';
+      if(isPlaying) {
+        startPlayback();
+      } else {
+        stopPlayback();
+      }
+    }
+    
+    function startPlayback() {
+      if (animationInterval) clearInterval(animationInterval);
+      
+      animationInterval = setInterval(() => {
+        if (!isPlaying) return;
+        
+        currentTime += 1;
+        
+        // Update progress bar
+        progress = (currentTime / trackDuration) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+        
+        // Update time display
+        const mins = Math.floor(currentTime / 60);
+        const secs = currentTime % 60;
+        document.getElementById('currentTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        
+        // Auto-advance to next track when current track ends
+        if (currentTime >= trackDuration) {
+          nextTrack();
+        }
+      }, 1000);
+    }
+    
+    function stopPlayback() {
+      if (animationInterval) {
+        clearInterval(animationInterval);
+        animationInterval = null;
+      }
+    }
+    
+    function seekTrack(e) {
+      const r = e.currentTarget.getBoundingClientRect();
+      const clickPercent = (e.clientX - r.left) / r.width;
+      currentTime = Math.floor(clickPercent * trackDuration);
+      progress = clickPercent * 100;
+      
+      document.getElementById('progressFill').style.width = progress + '%';
+      const mins = Math.floor(currentTime / 60);
+      const secs = currentTime % 60;
+      document.getElementById('currentTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    function prevTrack() {
+      if (currentTrackIndex > 0) {
+        currentTrackIndex--;
+        loadTrack(currentAlbumIndex, currentTrackIndex);
+        if (isPlaying) startPlayback();
+      }
+    }
+    
+    function nextTrack() {
+      const album = albums[currentAlbumIndex];
+      if (currentTrackIndex < album.tracks.length - 1) {
+        currentTrackIndex++;
+        loadTrack(currentAlbumIndex, currentTrackIndex);
+        if (isPlaying) startPlayback();
+      } else {
+        // End of album - stop playing
+        isPlaying = false;
+        document.getElementById('playBtn').textContent = '▶';
+        stopPlayback();
+      }
+    }
+    
+    function updateEQ(i,v) {
+      document.getElementById('v'+i).textContent = (v>0?'+':'')+v;
+    }
+    
+    function setPreset(btn,type) {
+      document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const presets = {
+        flat:[0,0,0,0,0,0,0,0,0,0],
+        rock:[5,4,3,1,-1,-2,0,2,4,5],
+        jazz:[4,3,2,2,0,0,2,3,4,5],
+        classical:[5,4,3,2,0,0,2,3,4,5],
+        bass:[8,6,4,2,0,0,0,0,0,0]
+      };
+      const vals = presets[type];
+      document.querySelectorAll('.eq-slider').forEach((s,i)=>{
+        s.value = vals[i];
+        updateEQ(i,vals[i]);
+      });
+    }
+    
+    function openMenu() {
+      document.getElementById('menuOverlay').classList.add('show');
+    }
+    
+    function closeMenu() {
+      document.getElementById('menuOverlay').classList.remove('show');
+    }
+    
+    function toggleSetting(toggle) {
+      toggle.classList.toggle('active');
+    }
+    
+    function addToFavorites(album) {
+      if(!favorites.find(f=>f.title===album.title)) {
+        favorites.push(album);
+        alert('Added to Favorites!');
+      }
+    }
+    
+    function loadFavorites() {
+      const list = document.getElementById('favoritesList');
+      const empty = document.getElementById('emptyFavorites');
+      
+      if(favorites.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      
+      empty.style.display = 'none';
+      list.innerHTML = favorites.map((f,i)=>`
+        <div class="favorite-item" onclick="playFavorite(${i})">
+          <div class="favorite-icon">${f.icon}</div>
+          <div class="favorite-info">
+            <div class="favorite-title">${f.title}</div>
+            <div class="favorite-artist">${f.artist}</div>
+          </div>
+          <span class="favorite-remove" onclick="event.stopPropagation(); removeFavorite(${i});">×</span>
+        </div>
+      `).join('');
+    }
+    
+    function playFavorite(i) {
+      playAlbum(albums.findIndex(a=>a.title===favorites[i].title));
+    }
+    
+    function removeFavorite(i) {
+      favorites.splice(i, 1);
+      loadFavorites();
+    }
+    
+    function performSearch() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const results = document.getElementById('searchResults');
+      
+      if(!query) {
+        results.innerHTML = '<div class="search-empty">Type to search your library</div>';
+        return;
+      }
+      
+      const matches = albums.filter(a=>{
+        return a.title.toLowerCase().includes(query) || a.artist.toLowerCase().includes(query);
+      });
+      
+      if(matches.length === 0) {
+        results.innerHTML = '<div class="search-empty">No results found</div>';
+        return;
+      }
+      
+      results.innerHTML = matches.map((m,i)=>`
+        <div class="search-item" onclick="playAlbum(${albums.indexOf(m)})">
+          <div style="font-size: 24px; margin-bottom: 6px;">${m.icon}</div>
+          <div style="font-weight: 600; margin-bottom: 2px;">${m.title}</div>
+          <div style="font-size: 12px; color: #B0B0B0;">${m.artist}</div>
+        </div>
+      `).join('');
+    }
+    
+    function updateStats() {
+      document.getElementById('totalTracks').textContent = albums.length * 21;
+      document.getElementById('albumCount').textContent = albums.length;
+      document.getElementById('favCount').textContent = favorites.length;
+      document.getElementById('listeningTime').textContent = (Math.random() * 30 + 10).toFixed(1) + ' hrs';
+      document.getElementById('qualityScore').textContent = '98%';
+      document.getElementById('playCount').textContent = Math.floor(Math.random() * 500 + 200);
+    }
+
+    function toggleBadgeInfo(type) {
+      const info = document.getElementById('badgeInfo');
+      const badges = document.querySelectorAll('.badge');
+      
+      const badgeTexts = {
+        dsd: 'Direct Stream Digital (DSD) is a high-resolution audio format that uses 1-bit pulse-density modulation at 2.8MHz or higher. It provides exceptional detail and analog-like warmth.',
+        hires: 'Hi-Res Audio is defined as lossless audio capable of reproducing the full range of sound from recordings that have been mastered from better than CD quality sources. Typically 24-bit/96kHz or higher.',
+        lossless: 'Lossless audio compression reduces file size without any loss in audio quality. Formats like FLAC and ALAC preserve the exact audio data from the original source.',
+        '24bit': '24-bit audio provides 16,777,216 possible amplitude values compared to 16-bit\'s 65,536. This results in a wider dynamic range (144dB vs 96dB) and lower noise floor for pristine audio.'
+      };
+      
+      // Remove active class from all badges
+      badges.forEach(b => b.classList.remove('active'));
+      
+      // If clicking the same badge, hide info
+      if(info.textContent === badgeTexts[type] && info.classList.contains('show')) {
+        info.classList.remove('show');
+        setTimeout(() => info.textContent = '', 300);
+      } else {
+        // Show new info
+        info.textContent = badgeTexts[type];
+        info.classList.add('show');
+        // Add active class to clicked badge
+        event.target.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

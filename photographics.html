@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VVE0ELDSDH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VVE0ELDSDH');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photographics | ELMAN PADILLA</title>
+    <meta name="description" content="Explore Elman Padilla's photographics portfolio.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">ELMAN PADILLA</a>
+            <nav class="nav">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                                    <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="dropdown">
+                        <a href="#">Photography</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="gallery.html">Black & White</a></li>
+                            <li><a href="color.html">Color</a></li>
+                            <li><a href="street.html">Street</a></li>
+                            <li><a href="commercial.html">Commercial</a></li>
+                            <li><a href="photographics.html">Photographics</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Art</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="drawing.html">Drawing</a></li>
+                            <li><a href="illustrations.html">Illustrations</a></li>
+                            <li><a href="paintings.html">Paintings</a></li>
+                            <li><a href="installations.html">Installations</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Design</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="sketches.html">Sketches</a></li>
+                            <li><a href="posters.html">Posters</a></li>
+                            <li><a href="product.html">Product</a></li>
+                            <li><a href="branding.html">Branding</a></li>
+                            <li><a href="apps.html">App Design</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="gallery-hero">
+            <div class="container">
+                <h1>Photographics</h1>
+                <p>Photographic art and mixed media</p>
+            </div>
+        </section>
+
+        <section class="gallery-section">
+            <div class="container">
+                <div id="gallery-grid" class="masonry-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>ELMAN PADILLA</h3>
+                    <p>Photography & Design</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Photography</h4>
+                    <ul>
+                        <li><a href="gallery.html">Black & White</a></li>
+                        <li><a href="color.html">Color</a></li>
+                        <li><a href="street.html">Street</a></li>
+                        <li><a href="commercial.html">Commercial</a></li>
+                        <li><a href="photographics.html" class="active">Photographics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Art</h4>
+                    <ul>
+                        <li><a href="photographics.html" class="active">Drawing</a></li>
+                        <li><a href="illustrations.html">Illustrations</a></li>
+                        <li><a href="paintings.html">Paintings</a></li>
+                        <li><a href="installations.html">Installations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/el_manpadilla/" target="_blank" aria-label="Instagram">Instagram</a>
+                        <a href="https://es.linkedin.com/in/elman-padilla-9992627" target="_blank" aria-label="LinkedIn">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 ELMAN PADILLA. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" aria-label="Close lightbox">&times;</button>
+        <button class="lightbox-prev" aria-label="Previous image">&#10094;</button>
+        <button class="lightbox-next" aria-label="Next image">&#10095;</button>
+        <img src="" alt="" class="lightbox-image">
+        <div class="lightbox-caption"></div>
+    </div>
+
+    <script src="js/data-photographics.js"></script>
+    <script src="js/masonry.js"></script>
+    <script src="js/gallery.js"></script>
+    <script>
+        if (typeof photographicsGalleryData !== 'undefined') {
+            initGallery(photographicsGalleryData);
+        }
+    </script>
+</body>
+</html>

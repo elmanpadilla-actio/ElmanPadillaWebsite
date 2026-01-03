@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.restored
+
+# Large source files (not needed for deployment)
+WebSite Images/
+
+# Log files
+*.log
+
+# Editor directories
+.vscode/
+.idea/
