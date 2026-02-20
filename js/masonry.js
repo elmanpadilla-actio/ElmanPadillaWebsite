@@ -9,8 +9,6 @@ class MasonryLayout {
     }
     
     init() {
-        // For CSS column-based masonry, we don't need JS calculations
-        // This class can be extended if you want JS-based masonry instead
         this.addResizeListener();
     }
     
@@ -25,7 +23,6 @@ class MasonryLayout {
     }
     
     relayout() {
-        // Trigger reflow if needed
         if (this.container) {
             this.container.style.columnCount = window.innerWidth < 640 ? '1' : 
                                                window.innerWidth < 1024 ? '2' : '3';
@@ -59,6 +56,7 @@ function createMasonryItem(data) {
     caption.className = 'masonry-caption';
     caption.innerHTML = `
         <h3>${data.title}</h3>
+        ${data.description ? `<p class="masonry-description">${data.description}</p>` : ''}
     `;
     
     item.appendChild(img);
@@ -67,7 +65,6 @@ function createMasonryItem(data) {
     return item;
 }
 
-// Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { MasonryLayout, createMasonryItem };
 }
