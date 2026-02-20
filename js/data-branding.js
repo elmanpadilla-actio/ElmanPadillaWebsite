@@ -53,5 +53,11 @@ const brandingGalleryData = [
         src: 'images/gallery/branding/Bay-Islandslogo.jpg',
         title: 'Bay Islands',
         category: 'branding'
+    },
+    {
+        id: 10,
+        src: 'images/gallery/branding/Quijote-Logo.jpg',
+        title: 'Quijote Logo',
+        category: 'branding'
     }
 ];
