@@ -20,20 +20,38 @@ const brandingGalleryData = [
     },
     {
         id: 4,
-        src: 'images/gallery/branding/Final Logo Expo2020 Dubai.jpg',
-        title: 'Expo 2020 Dubai',
-        category: 'branding'
-    },
-    {
-        id: 5,
         src: 'images/gallery/branding/RMLfinal.jpg',
         title: 'RML Logo',
         category: 'branding'
     },
     {
-        id: 6,
+        id: 5,
         src: 'images/gallery/branding/TTRlogo.jpg',
         title: 'TTR Logo',
+        category: 'branding'
+    },
+    {
+        id: 6,
+        src: 'images/gallery/branding/Sonicvault logo2.jpg',
+        title: 'SonicVault',
+        category: 'branding'
+    },
+    {
+        id: 7,
+        src: 'images/gallery/branding/designpath_logo2.jpg',
+        title: 'DesignPath',
+        category: 'branding'
+    },
+    {
+        id: 8,
+        src: 'images/gallery/branding/Viajeslogo.jpg',
+        title: 'Viajes Logo',
+        category: 'branding'
+    },
+    {
+        id: 9,
+        src: 'images/gallery/branding/Bay-Islandslogo.jpg',
+        title: 'Bay Islands',
         category: 'branding'
     }
 ];
