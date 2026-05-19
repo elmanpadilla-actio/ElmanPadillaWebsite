@@ -553,12 +553,12 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
         const courseContent = {
             en: {
                 modules:[
-                    {n:1,name:'Text Generation',    color:'#004ba0',bg:'#eef4fb',icon:'T'},
-                    {n:2,name:'Image Generation',   color:'#0369A1',bg:'#F0F9FF',icon:'I'},
-                    {n:3,name:'Audio Generation',   color:'#0891B2',bg:'#ECFEFF',icon:'A'},
-                    {n:4,name:'Video Generation',   color:'#0E7490',bg:'#F0FDFF',icon:'V'},
-                    {n:5,name:'Website Generation', color:'#1E40AF',bg:'#eef4fb',icon:'W'},
-                    {n:6,name:'Deepfakes & Trends', color:'#003578',bg:'#F0F4FF',icon:'D'},
+                    {n:1,name:'AI Writing & Prompting',    color:'#004ba0',bg:'#eef4fb',icon:'T'},
+                    {n:2,name:'AI Visual Creation',   color:'#0369A1',bg:'#F0F9FF',icon:'I'},
+                    {n:3,name:'AI Sound Design',   color:'#0891B2',bg:'#ECFEFF',icon:'A'},
+                    {n:4,name:'AI Filmmaking',   color:'#0E7490',bg:'#F0FDFF',icon:'V'},
+                    {n:5,name:'AI Web Building', color:'#1E40AF',bg:'#eef4fb',icon:'W'},
+                    {n:6,name:'Synthetic Media & Ethics', color:'#003578',bg:'#F0F4FF',icon:'D'},
                 ],
                 weeks:[
                     {n:1,m:1,checkpoint:false,
@@ -573,7 +573,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Perplexity',url:'https://perplexity.ai',free:true,desc:'AI search with cited sources'},
                      ]},
                     {n:2,m:1,checkpoint:false,
-                     t:'Text Generation — Creative Writing & Scripting',
+                     t:'AI Writing & Prompting — Creative Writing & Scripting',
                      obj:['Apply AI to scriptwriting and narrative generation','Compare AI outputs across different prompting styles','Iterate prompts systematically to improve quality','Critically evaluate AI-generated creative text'],
                      act:'Write a 300-word script for a 60-second promotional video using AI. Run at least 4 iterations. Document each prompt change and exactly why you made it in your APJ.',
                      tools:[
@@ -593,7 +593,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Perplexity',url:'https://perplexity.ai',free:true,desc:'Research with cited sources'},
                      ]},
                     {n:4,m:1,checkpoint:false,
-                     t:'Text Generation Applications & Ethics',
+                     t:'AI Writing & Prompting: Applications & Ethics',
                      obj:['Identify professional AI text tools and their limitations','Detect AI-generated content using detection tools','Evaluate copyright and IP implications of AI-generated text','Apply ethical frameworks to content decisions'],
                      act:'Generate a piece of marketing copy with AI. Use detection tools to analyze it. Fact-check every claim. Write a 200-word audit report on what requires human oversight before publishing.',
                      tools:[
@@ -613,7 +613,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Gemini',url:'https://gemini.google.com',free:true,desc:'Real-time web search'},
                      ]},
                     {n:6,m:2,checkpoint:true,
-                     t:'Image Generation Fundamentals',
+                     t:'AI Visual Creation: Fundamentals',
                      obj:['Understand how diffusion models and image AI work','Use core image generation platforms effectively','Craft visual prompts with style, lighting, and composition cues','Evaluate ethical and copyright issues in AI-generated imagery'],
                      act:'Generate the same subject across 3 AI image tools. Compare quality, style bias, and diversity representation. ⚡ Submit Checkpoint 1 APJ Report with CW1 this week.',
                      tools:[
@@ -644,7 +644,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Adobe Firefly',url:'https://firefly.adobe.com',free:true,desc:'Commercial-safe for brand work'},
                      ]},
                     {n:9,m:3,checkpoint:false,
-                     t:'Audio Generation & AI Music',
+                     t:'AI Sound Design & AI Music',
                      obj:['Generate AI music for various moods and media use cases','Evaluate AI music tools for quality, style, and licensing','Produce an AI soundtrack for a media project','Critically assess copyright and IP implications of AI music'],
                      act:'Create a 60-second AI-generated soundtrack for your Week 2 promotional video script. Compare at least 2 music generation tools. Reflect on licensing implications in your APJ.',
                      tools:[
@@ -664,7 +664,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Play.ht',url:'https://play.ht',free:false,desc:'Best multilingual voiceovers'},
                      ]},
                     {n:11,m:4,checkpoint:false,
-                     t:'Video Generation — AI Tools & Workflow',
+                     t:'AI Filmmaking — Tools & Workflow',
                      obj:['Generate video from text and image prompts','Understand how AI video models handle motion and physics','Compare AI video tools for quality, speed, and cost','Evaluate AI video generation for professional media workflows'],
                      act:'Generate three 5-second video clips from the identical text prompt using different AI video tools. Compare motion quality, prompt adherence, and realism. Document your analysis in the APJ.',
                      tools:[
@@ -685,7 +685,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Adobe Premiere + Firefly',url:'https://adobe.com/premiere',free:false,desc:'Industry standard with AI integration'},
                      ]},
                     {n:13,m:5,checkpoint:false,
-                     t:'Website Generation & AI Chatbots',
+                     t:'AI Web Building & Chatbots',
                      obj:['Build functional websites using AI website builders','Integrate AI chatbots and interactive elements into web interfaces','Evaluate UX, accessibility, and design quality in AI-generated sites','Apply design thinking critically to AI-driven web creation'],
                      act:'Build a 3-page AI-themed website prototype using Framer AI or Webflow. Integrate a simple AI chatbot. Document every AI tool used and every design decision made in your APJ.',
                      tools:[
@@ -839,12 +839,12 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
             },
             es: {
                 modules:[
-                    {n:1,name:'Generación de Texto',      color:'#004ba0',bg:'#eef4fb',icon:'T'},
-                    {n:2,name:'Generación de Imágenes',   color:'#0369A1',bg:'#F0F9FF',icon:'I'},
-                    {n:3,name:'Generación de Audio',      color:'#0891B2',bg:'#ECFEFF',icon:'A'},
-                    {n:4,name:'Generación de Video',      color:'#0E7490',bg:'#F0FDFF',icon:'V'},
-                    {n:5,name:'Generación de Sitios Web', color:'#1E40AF',bg:'#eef4fb',icon:'W'},
-                    {n:6,name:'Deepfakes y Tendencias',   color:'#003578',bg:'#F0F4FF',icon:'D'},
+                    {n:1,name:'Escritura e IA',      color:'#004ba0',bg:'#eef4fb',icon:'T'},
+                    {n:2,name:'Creación Visual con IA',   color:'#0369A1',bg:'#F0F9FF',icon:'I'},
+                    {n:3,name:'Diseño Sonoro con IA',      color:'#0891B2',bg:'#ECFEFF',icon:'A'},
+                    {n:4,name:'Cine con IA',      color:'#0E7490',bg:'#F0FDFF',icon:'V'},
+                    {n:5,name:'Construcción Web con IA', color:'#1E40AF',bg:'#eef4fb',icon:'W'},
+                    {n:6,name:'Medios Sintéticos y Ética',   color:'#003578',bg:'#F0F4FF',icon:'D'},
                 ],
                 weeks:[
                     {n:1,m:1,checkpoint:false,
@@ -859,7 +859,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Perplexity',url:'https://perplexity.ai',free:true,desc:'Búsqueda con IA y fuentes citadas'},
                      ]},
                     {n:2,m:1,checkpoint:false,
-                     t:'Generación de Texto — Escritura Creativa y Guiones',
+                     t:'Escritura e IA — Escritura Creativa y Guiones',
                      obj:['Aplicar IA a la escritura de guiones y generación narrativa','Comparar outputs de IA con distintos estilos de prompting','Iterar prompts sistemáticamente para mejorar la calidad','Evaluar críticamente el texto creativo generado por IA'],
                      act:'Escribe un guion de 300 palabras para un video promocional de 60 segundos usando IA. Realiza al menos 4 iteraciones. Documenta cada cambio de prompt y exactamente por qué lo hiciste en tu APJ.',
                      tools:[
@@ -879,7 +879,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Perplexity',url:'https://perplexity.ai',free:true,desc:'Investigación con fuentes citadas'},
                      ]},
                     {n:4,m:1,checkpoint:false,
-                     t:'Aplicaciones de Generación de Texto y Ética',
+                     t:'Aplicaciones de Escritura con IA y Ética',
                      obj:['Identificar herramientas de texto IA profesionales y sus limitaciones','Detectar contenido generado por IA usando herramientas de detección','Evaluar implicaciones de derechos de autor en texto generado por IA','Aplicar marcos éticos a decisiones de contenido'],
                      act:'Genera un texto de marketing con IA. Usa herramientas de detección para analizarlo. Verifica factualmente cada afirmación. Escribe un informe de auditoría de 200 palabras sobre qué requiere supervisión humana antes de publicar.',
                      tools:[
@@ -899,7 +899,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Gemini',url:'https://gemini.google.com',free:true,desc:'Búsqueda web en tiempo real'},
                      ]},
                     {n:6,m:2,checkpoint:true,
-                     t:'Fundamentos de Generación de Imágenes',
+                     t:'Fundamentos de Creación Visual con IA',
                      obj:['Comprender cómo funcionan los modelos de difusión e IA de imágenes','Usar plataformas de generación de imágenes eficazmente','Elaborar prompts visuales con indicadores de estilo, iluminación y composición','Evaluar problemas éticos y de derechos de autor en imágenes generadas por IA'],
                      act:'Genera el mismo sujeto en 3 herramientas de IA de imágenes. Compara calidad, sesgo de estilo y representación de diversidad. ⚡ Entrega el Informe APJ del Punto de Control 1 con la Tarea 1 esta semana.',
                      tools:[
@@ -930,7 +930,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Adobe Firefly',url:'https://firefly.adobe.com',free:true,desc:'Seguro comercialmente para trabajo de marca'},
                      ]},
                     {n:9,m:3,checkpoint:false,
-                     t:'Generación de Audio e IA Musical',
+                     t:'Diseño Sonoro con IA y Música',
                      obj:['Generar música con IA para distintos estados de ánimo y usos mediáticos','Evaluar herramientas de música IA por calidad, estilo y licencias','Producir una banda sonora IA para un proyecto de medios','Evaluar críticamente las implicaciones de derechos de autor en música IA'],
                      act:'Crea una banda sonora de 60 segundos generada por IA para el guion del video de la Semana 2. Compara al menos 2 herramientas de generación musical. Reflexiona sobre las implicaciones de licencias en tu APJ.',
                      tools:[
@@ -950,7 +950,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Play.ht',url:'https://play.ht',free:false,desc:'Mejor para narraciones multilingüe'},
                      ]},
                     {n:11,m:4,checkpoint:false,
-                     t:'Generación de Video — Herramientas IA y Flujo de Trabajo',
+                     t:'Cine con IA — Herramientas y Flujo de Trabajo',
                      obj:['Generar video a partir de prompts de texto e imagen','Entender cómo los modelos de video IA manejan movimiento y física','Comparar herramientas de video IA por calidad, velocidad y costo','Evaluar la generación de video IA para flujos de trabajo profesionales'],
                      act:'Genera tres clips de 5 segundos del mismo prompt de texto usando distintas herramientas de video IA. Compara calidad de movimiento, adherencia al prompt y realismo. Documenta tu análisis en el APJ.',
                      tools:[
@@ -971,7 +971,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                          {name:'Adobe Premiere + Firefly',url:'https://adobe.com/premiere',free:false,desc:'Estándar de la industria con integración IA'},
                      ]},
                     {n:13,m:5,checkpoint:false,
-                     t:'Generación de Sitios Web y Chatbots con IA',
+                     t:'Construcción Web con IA y Chatbots',
                      obj:['Construir sitios web funcionales usando constructores web con IA','Integrar chatbots de IA en interfaces web','Evaluar UX, accesibilidad y calidad de diseño en sitios generados por IA','Aplicar pensamiento de diseño críticamente a la creación web con IA'],
                      act:'Construye un prototipo de sitio web de 3 páginas con temática de IA usando Framer AI o Webflow. Integra un chatbot simple con IA. Documenta cada herramienta IA usada y cada decisión de diseño tomada en tu APJ.',
                      tools:[
