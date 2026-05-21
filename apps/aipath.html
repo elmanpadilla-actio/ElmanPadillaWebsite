@@ -554,11 +554,11 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
             en: {
                 modules:[
                     {n:1,name:'AI Writing & Prompting',    color:'#004ba0',bg:'#eef4fb',icon:'T'},
-                    {n:2,name:'AI Visual Creation',   color:'#0369A1',bg:'#F0F9FF',icon:'I'},
-                    {n:3,name:'AI Sound Design',   color:'#0891B2',bg:'#ECFEFF',icon:'A'},
-                    {n:4,name:'AI Filmmaking',   color:'#0E7490',bg:'#F0FDFF',icon:'V'},
+                    {n:2,name:'AI Visual Creation',   color:'#0369A1',bg:'#eef4fb',icon:'I'},
+                    {n:3,name:'AI Sound Design',   color:'#0891B2',bg:'#eef4fb',icon:'A'},
+                    {n:4,name:'AI Filmmaking',   color:'#0E7490',bg:'#eef4fb',icon:'V'},
                     {n:5,name:'AI Web Building', color:'#1E40AF',bg:'#eef4fb',icon:'W'},
-                    {n:6,name:'Synthetic Media & Ethics', color:'#003578',bg:'#F0F4FF',icon:'D'},
+                    {n:6,name:'Synthetic Media & Ethics', color:'#003578',bg:'#eef4fb',icon:'D'},
                 ],
                 weeks:[
                     {n:1,m:1,checkpoint:false,
@@ -840,11 +840,11 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
             es: {
                 modules:[
                     {n:1,name:'Escritura e IA',      color:'#004ba0',bg:'#eef4fb',icon:'T'},
-                    {n:2,name:'Creación Visual con IA',   color:'#0369A1',bg:'#F0F9FF',icon:'I'},
-                    {n:3,name:'Diseño Sonoro con IA',      color:'#0891B2',bg:'#ECFEFF',icon:'A'},
-                    {n:4,name:'Cine con IA',      color:'#0E7490',bg:'#F0FDFF',icon:'V'},
+                    {n:2,name:'Creación Visual con IA',   color:'#0369A1',bg:'#eef4fb',icon:'I'},
+                    {n:3,name:'Diseño Sonoro con IA',      color:'#0891B2',bg:'#eef4fb',icon:'A'},
+                    {n:4,name:'Cine con IA',      color:'#0E7490',bg:'#eef4fb',icon:'V'},
                     {n:5,name:'Construcción Web con IA', color:'#1E40AF',bg:'#eef4fb',icon:'W'},
-                    {n:6,name:'Medios Sintéticos y Ética',   color:'#003578',bg:'#F0F4FF',icon:'D'},
+                    {n:6,name:'Medios Sintéticos y Ética',   color:'#003578',bg:'#eef4fb',icon:'D'},
                 ],
                 weeks:[
                     {n:1,m:1,checkpoint:false,
@@ -1260,17 +1260,20 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
         };
 
         const modIconSVG = (n, color, size=48) => {
-            const icons6 = [
-                `<rect x="8" y="8" width="32" height="4" rx="2" fill="${color}"/><rect x="22" y="12" width="4" height="28" rx="2" fill="${color}"/>`,
-                `<rect x="6" y="6" width="36" height="36" rx="4" fill="none" stroke="${color}" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="${color}"/><path d="M6 32l10-10 8 8 6-6 12 12" fill="none" stroke="${color}" stroke-width="3" stroke-linejoin="round"/>`,
-                `<rect x="6" y="20" width="4" height="8" rx="2" fill="${color}"/><rect x="14" y="12" width="4" height="24" rx="2" fill="${color}"/><rect x="22" y="6" width="4" height="36" rx="2" fill="${color}"/><rect x="30" y="14" width="4" height="20" rx="2" fill="${color}"/><rect x="38" y="20" width="4" height="8" rx="2" fill="${color}"/>`,
-                `<rect x="4" y="4" width="40" height="40" rx="6" fill="none" stroke="${color}" stroke-width="3"/><path d="M18 14l16 10-16 10V14z" fill="${color}"/>`,
-                `<circle cx="24" cy="24" r="18" fill="none" stroke="${color}" stroke-width="3"/><ellipse cx="24" cy="24" rx="8" ry="18" fill="none" stroke="${color}" stroke-width="2"/><line x1="6" y1="24" x2="42" y2="24" stroke="${color}" stroke-width="2"/><line x1="6" y1="16" x2="42" y2="16" stroke="${color}" stroke-width="2"/><line x1="6" y1="32" x2="42" y2="32" stroke="${color}" stroke-width="2"/>`,
-                `<rect x="8" y="8" width="32" height="32" rx="4" fill="none" stroke="${color}" stroke-width="3"/><rect x="4" y="4" width="10" height="10" fill="none" stroke="${color}" stroke-width="2.5"/><rect x="34" y="4" width="10" height="10" fill="none" stroke="${color}" stroke-width="2.5"/><rect x="4" y="34" width="10" height="10" fill="none" stroke="${color}" stroke-width="2.5"/><rect x="34" y="34" width="10" height="10" fill="none" stroke="${color}" stroke-width="2.5"/><circle cx="24" cy="22" r="4" fill="${color}"/><path d="M16 34s2-6 8-6 8 6 8 6" fill="${color}"/>`,
-            ];
+            const data = {
+                1: `<rect width="64" height="64" rx="12" fill="${color}"/><rect x="9" y="9" width="46" height="14" rx="1" fill="white" fill-opacity="0.95"/><rect x="9" y="25" width="40" height="14" rx="1" fill="white" fill-opacity="0.65"/><rect x="9" y="41" width="28" height="14" rx="1" fill="white" fill-opacity="0.35"/>`,
+                2: `<rect width="64" height="64" rx="12" fill="${color}"/><rect x="9" y="9" width="14" height="14" fill="white" fill-opacity="0.95"/><rect x="25" y="9" width="14" height="14" fill="white" fill-opacity="0.70"/><rect x="41" y="9" width="14" height="14" fill="white" fill-opacity="0.40"/><rect x="9" y="25" width="14" height="14" fill="white" fill-opacity="0.70"/><rect x="25" y="25" width="14" height="14" fill="white" fill-opacity="0.50"/><rect x="41" y="25" width="14" height="14" fill="white" fill-opacity="0.25"/><rect x="9" y="41" width="14" height="14" fill="white" fill-opacity="0.40"/><rect x="25" y="41" width="14" height="14" fill="white" fill-opacity="0.20"/><rect x="41" y="41" width="14" height="14" fill="white" fill-opacity="0.10"/>`,
+                3: `<rect width="64" height="64" rx="12" fill="${color}"/><rect x="9" y="9" width="14" height="14" fill="white" fill-opacity="0.20"/><rect x="25" y="9" width="14" height="14" fill="white" fill-opacity="0.55"/><rect x="41" y="9" width="14" height="14" fill="white" fill-opacity="0.20"/><rect x="9" y="25" width="14" height="14" fill="white" fill-opacity="0.55"/><rect x="25" y="25" width="14" height="14" fill="white" fill-opacity="0.95"/><rect x="41" y="25" width="14" height="14" fill="white" fill-opacity="0.55"/><rect x="9" y="41" width="14" height="14" fill="white" fill-opacity="0.95"/><rect x="25" y="41" width="14" height="14" fill="white" fill-opacity="0.95"/><rect x="41" y="41" width="14" height="14" fill="white" fill-opacity="0.95"/>`,
+                4: `<rect width="64" height="64" rx="12" fill="${color}"/><rect x="9" y="9" width="14" height="46" fill="white" fill-opacity="0.35"/><rect x="25" y="18" width="14" height="28" fill="white" fill-opacity="0.65"/><rect x="41" y="25" width="14" height="14" fill="white" fill-opacity="0.95"/>`,
+                5: `<rect width="64" height="64" rx="12" fill="${color}"/><rect x="9" y="9" width="46" height="14" rx="1" fill="white" fill-opacity="0.95"/><rect x="9" y="25" width="20" height="30" rx="1" fill="white" fill-opacity="0.65"/><rect x="31" y="25" width="24" height="14" rx="1" fill="white" fill-opacity="0.50"/><rect x="31" y="41" width="24" height="14" rx="1" fill="white" fill-opacity="0.30"/>`,
+                6: `<rect width="64" height="64" rx="12" fill="${color}"/><rect x="9" y="9" width="14" height="14" fill="white" fill-opacity="0.95"/><rect x="25" y="9" width="14" height="14" fill="white" fill-opacity="0.55"/><rect x="41" y="9" width="14" height="14" fill="white" fill-opacity="0.25"/><rect x="9" y="25" width="14" height="14" fill="white" fill-opacity="0.55"/><rect x="25" y="25" width="14" height="14" fill="white" fill-opacity="0.95"/><rect x="41" y="25" width="14" height="14" fill="white" fill-opacity="0.40"/><rect x="9" y="41" width="14" height="14" fill="white" fill-opacity="0.25"/><rect x="25" y="41" width="14" height="14" fill="white" fill-opacity="0.40"/><rect x="41" y="41" width="14" height="14" fill="white" fill-opacity="0.20"/>`,
+            };
+            const p = data[((n-1)%6)+1];
             const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-            svg.setAttribute('viewBox','0 0 48 48'); svg.setAttribute('width',size); svg.setAttribute('height',size);
-            svg.innerHTML = icons6[(n-1) % 6]; return svg;
+            svg.setAttribute('viewBox','0 0 64 64');
+            svg.setAttribute('width',size); svg.setAttribute('height',size);
+            svg.style.cssText='overflow:hidden;fill-rule:evenodd';
+            svg.innerHTML=p; return svg;
         };
 
         const toggleComplete = (weekNum) => {
@@ -2090,8 +2093,8 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                         ...data.modules.map(mod=>{
                             const mw=data.weeks.filter(w=>w.m===mod.n);
                             const md=mw.filter(w=>state.completed.includes(w.n)).length;
-                            return el('div',{onclick:()=>{state.selectedModule=mod.n;state.view='weeks';state.selectedWeek=null;render();},style:`display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:${mod.bg};cursor:pointer;transition:box-shadow .2s,transform .2s`,onmouseenter:(e)=>{e.currentTarget.style.boxShadow='0 4px 14px rgba(0,75,160,.13)';e.currentTarget.style.transform='translateY(-1px)'},onmouseleave:(e)=>{e.currentTarget.style.boxShadow='';e.currentTarget.style.transform=''}},
-                                el('div',{style:`width:36px;height:36px;background:${mod.color}20;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0`},modIconSVG(mod.n,mod.color,24)),
+                            return el('div',{onclick:()=>{state.selectedModule=mod.n;state.view='weeks';state.selectedWeek=null;render();},style:`display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:${mod.bg};cursor:pointer;transition:box-shadow .2s,transform .2s`,onmouseenter:(e)=>{e.currentTarget.style.boxShadow='0 4px 14px rgba(0,75,160,.13)';e.currentTarget.style.transform='translateY(-1px)'},onmouseleave:(e)=>{e.currentTarget.style.boxShadow='';e.currentTarget.style.transform=''}},
+                                el('div',{style:'width:48px;height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center'},modIconSVG(mod.n,'#004ba0',48)),
                                 el('div',{style:'flex:1'},
                                     el('div',{style:'font-size:13px;font-weight:600;color:#1E293B'},`M${mod.n}: ${mod.name}`),
                                     el('div',{style:'font-size:11px;color:#64748B'},`${md}/${mw.length} ${ui.weeksLabel}`)
@@ -2135,7 +2138,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                             const has=!!(entry?.step1?.prompts); const locked=!!(entry?.locked);
                             const avgR=entry?.step3?.ratings?.filter(r=>r>0).length?(entry.step3.ratings.reduce((a,b)=>a+b,0)/entry.step3.ratings.filter(r=>r>0).length).toFixed(1):null;
                             return el('div',{
-                                style:`border-radius:10px;padding:10px;border:1px solid;border-color:${has?mod.color+'40':'#E2E8F0'};background:${has?mod.bg:'#F8FAFC'};cursor:pointer`,
+                                style:`border-radius:10px;padding:10px;border:1px solid;border-color:${has?mod.color+'40':'#E2E8F0'};background:${has?mod.bg:'#eef4fb'};cursor:pointer`,
                                 onclick:()=>{state.selectedWeek=week.n;state.view='weeks';render();}
                             },
                                 el('div',{style:'display:flex;justify-content:space-between;align-items:center;margin-bottom:3px'},
@@ -2368,7 +2371,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                     const mw=data2.weeks.filter(w=>w.m===mod.n);
                     return el('div',{},
                         el('div',{style:'display:flex;align-items:center;gap:10px;margin-bottom:10px'},
-                            el('div',{style:`width:32px;height:32px;background:${mod.color}18;border-radius:10px;display:flex;align-items:center;justify-content:center`},modIconSVG(mod.n,mod.color,20)),
+                            el('div',{style:'width:44px;height:44px;display:flex;align-items:center;justify-content:center'},modIconSVG(mod.n,'#004ba0',44)),
                             el('h3',{class:'syne',style:`font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:${mod.color}`},`M${mod.n}: ${mod.name}`)
                         ),
                         el('div',{style:'display:flex;flex-direction:column;gap:8px;margin-bottom:16px'},
@@ -2487,7 +2490,7 @@ const logoSVGHeader = `<svg viewBox="1500 2600 12000 3800" xmlns="http://www.w3.
                         const isFav=state.favorites.some(f=>f.u===r.u);
                         const mod=data.modules.find(m=>m.n===r.m);
                         return el('div',{class:'card-hover',style:'background:white;border-radius:12px;border:1px solid #d6e4f5;display:flex;align-items:center;gap:10px;padding:12px 14px'},
-                            el('div',{style:`width:32px;height:32px;border-radius:8px;background:${mod?.color||'#004ba0'}15;display:flex;align-items:center;justify-content:center;flex-shrink:0`},modIconSVG(r.m,mod?.color||'#004ba0',20)),
+                            el('div',{style:`width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0`},modIconSVG(r.m,'#004ba0',44)),
                             el('div',{style:'flex:1;min-width:0'},
                                 el('a',{href:r.u,target:'_blank',style:'font-size:13px;font-weight:600;color:#003578;text-decoration:none;display:block'},r.t),
                                 el('span',{style:`font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:${mod?.bg||'#eef4fb'};color:${mod?.color||'#004ba0'}`},`M${r.m} · W${r.week}`)
